@@ -1,0 +1,47 @@
+{
+  "id": "displays",
+  "type": "integration",
+  "name": "Sowel Displays",
+  "version": "0.1.0",
+  "description": "MQTT supervision for Sowel-supervised displays (energy display, e-paper, ...)",
+  "icon": "Monitor",
+  "repo": "mchacher/sowel-plugin-displays",
+  "author": "mchacher",
+  "sowelVersion": ">=1.14.0",
+  "settings": [
+    {
+      "key": "mqtt_url",
+      "label": "MQTT Broker URL",
+      "type": "text",
+      "required": true,
+      "placeholder": "mqtt://localhost:1883"
+    },
+    {
+      "key": "mqtt_username",
+      "label": "MQTT Username",
+      "type": "text",
+      "required": false
+    },
+    {
+      "key": "mqtt_password",
+      "label": "MQTT Password",
+      "type": "password",
+      "required": false
+    },
+    {
+      "key": "mqtt_client_id",
+      "label": "MQTT Client ID",
+      "type": "text",
+      "required": false,
+      "defaultValue": "sowel-displays"
+    },
+    {
+      "key": "topic_prefix",
+      "label": "Topic prefix",
+      "type": "text",
+      "required": false,
+      "defaultValue": "sowel-display"
+    }
+  ],
+  "apiVersion": 2
+}
