@@ -96,6 +96,14 @@ export function parseState(payload: string | Buffer): ParsedState | null {
   }
 
   // Recommended fields
+  if (typeof obj.hostname === "string" && obj.hostname.length > 0) {
+    data.push({
+      key: "hostname",
+      type: "text",
+      category: "generic",
+      value: obj.hostname,
+    });
+  }
   if (typeof obj.ip === "string" && obj.ip.length > 0) {
     data.push({
       key: "ip_address",

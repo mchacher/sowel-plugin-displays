@@ -21,6 +21,7 @@ describe("parseState", () => {
     expect(keys).toEqual([
       "firmware_version",
       "uptime",
+      "hostname",
       "ip_address",
       "rssi",
       "language",

@@ -146,9 +146,15 @@ export class DisplaysEngine {
       // you reported at first connect is what you advertise" already
       // covers the polymorphism use case.
       if (!this.seen.has(sourceDeviceId)) {
-        const friendlyName = parsed.hostname ?? sourceDeviceId;
+        // Use the topic <id> as BOTH friendlyName and sourceDeviceId, so the
+        // lookup key in Sowel's DB is stable across upsert / updateDeviceData /
+        // updateDeviceStatus calls.  Sowel stores sourceDeviceId = friendlyName
+        // (see DeviceManager.upsertFromDiscovery), so any divergence between
+        // the two breaks subsequent updates.  The `hostname` field, when
+        // available, is appended to the discovery payload as `generic` data
+        // so the user can read it from the equipment detail.
         const discovered = {
-          friendlyName,
+          friendlyName: sourceDeviceId,
           manufacturer: "Sowel",
           model: "Sowel-supervised display",
           ieeeAddress: sourceDeviceId,
@@ -167,7 +173,7 @@ export class DisplaysEngine {
           new Set(parsed.orders.map((o) => o.key)),
         );
         this.logger.info(
-          { sourceDeviceId, friendlyName, dataKeys: parsed.data.map((d) => d.key) },
+          { sourceDeviceId, hostname: parsed.hostname, dataKeys: parsed.data.map((d) => d.key) },
           "Sowel Displays discovered",
         );
       } else {
