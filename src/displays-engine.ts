@@ -177,10 +177,11 @@ export class DisplaysEngine {
           "Sowel Displays discovered",
         );
       } else {
-        // Subsequent payload — declare any newly-seen orders so a
-        // display that starts reporting `language` later in life
-        // still gets the matching Sowel order.
-        this.maybeDeclareNewOrders(sourceDeviceId, parsed.orders);
+        // Subsequent payload — declare any newly-seen data / orders so
+        // a display that starts reporting `language` later in life
+        // (or upgrades its firmware to advertise a new capability like
+        // `display_wake`) still gets the matching Sowel order.
+        this.maybeDeclareNewOrders(sourceDeviceId, parsed.data, parsed.orders);
       }
 
       // Push the values regardless of first-time vs subsequent.
@@ -231,21 +232,33 @@ export class DisplaysEngine {
     }
   }
 
-  private maybeDeclareNewOrders(sourceDeviceId: string, orders: OrderField[]): void {
+  private maybeDeclareNewOrders(
+    sourceDeviceId: string,
+    data: DataField[],
+    orders: OrderField[],
+  ): void {
     const known = this.declaredOrders.get(sourceDeviceId) ?? new Set<string>();
     const fresh = orders.filter((o) => !known.has(o.key));
     if (fresh.length === 0) return;
-    // No incremental order-declaration API in the current Sowel
-    // plugin runtime — re-upserting from discovery is the supported
-    // path.  We rebuild the schema with the union of orders seen
-    // so far + fresh ones.  The deviceManager dedupes by key.
+    // Re-upsert with the augmented schema so the new orders land in
+    // Sowel's device DB.  `upsertFromDiscovery` is idempotent: existing
+    // data / orders with the same key are merged, new ones appended.
+    // Without this re-upsert the new orders only exist in this in-memory
+    // Set and never reach the Sowel DB — equipments bound to the device
+    // would see brightness + language but never `wake`.
+    this.deviceManager.upsertFromDiscovery(this.integrationId, this.integrationId, {
+      friendlyName: sourceDeviceId,
+      manufacturer: "Sowel",
+      model: "Sowel-supervised display",
+      ieeeAddress: sourceDeviceId,
+      data: data.map((d) => stripValue(d)),
+      orders: orders.map((o) => ({ ...o })),
+    });
     for (const o of fresh) known.add(o.key);
     this.declaredOrders.set(sourceDeviceId, known);
-    // Inform the user once per new order on a device — useful when
-    // debugging "why doesn't my brightness slider show up".
     this.logger.info(
       { sourceDeviceId, newOrders: fresh.map((o) => o.key) },
-      "Sowel Displays: newly observed orders (will be available after next discovery scan)",
+      "Sowel Displays: declared newly-observed orders via re-discovery",
     );
   }
 }

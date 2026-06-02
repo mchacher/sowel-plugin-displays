@@ -1,6 +1,6 @@
 {
   "name": "sowel-plugin-displays",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Sowel plugin: MQTT supervision for Sowel-supervised displays (energy display, e-paper, ...)",
   "type": "module",
   "main": "dist/index.js",
