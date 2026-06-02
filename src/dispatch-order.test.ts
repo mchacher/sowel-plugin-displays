@@ -51,4 +51,18 @@ describe("dispatchOrder", () => {
     const r = dispatchOrder("my-displays", "xyz", "language", "fr");
     expect(r?.topic).toBe("my-displays/xyz/cmd/language");
   });
+
+  it("wake → cmd/wake with empty payload, value ignored (spec 122)", () => {
+    const r = dispatchOrder("sowel-display", "abc", "wake", null);
+    expect(r).toEqual({ topic: "sowel-display/abc/cmd/wake", payload: "" });
+  });
+
+  it("wake with any value still produces empty payload", () => {
+    const r1 = dispatchOrder("sowel-display", "abc", "wake", true);
+    const r2 = dispatchOrder("sowel-display", "abc", "wake", 42);
+    const r3 = dispatchOrder("sowel-display", "abc", "wake", "anything");
+    expect(r1?.payload).toBe("");
+    expect(r2?.payload).toBe("");
+    expect(r3?.payload).toBe("");
+  });
 });

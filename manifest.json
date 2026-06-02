@@ -2,12 +2,12 @@
   "id": "displays",
   "type": "integration",
   "name": "Sowel Displays",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "MQTT supervision for Sowel-supervised displays (energy display, e-paper, ...)",
   "icon": "Monitor",
   "repo": "mchacher/sowel-plugin-displays",
   "author": "mchacher",
-  "sowelVersion": ">=1.14.0",
+  "sowelVersion": ">=1.19.0",
   "settings": [
     {
       "key": "mqtt_url",

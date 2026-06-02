@@ -152,6 +152,19 @@ export function parseState(payload: string | Buffer): ParsedState | null {
     });
   }
 
+  // Spec 122 — `wake: true` advertises the display's capability to
+  // restore its last user-chosen brightness via the `cmd/wake` topic.
+  // No corresponding data row (it is a capability flag, not telemetry).
+  // The recipe presence-display uses this order so it does not need to
+  // know the user's preferred brightness level.
+  if (obj.wake === true) {
+    orders.push({
+      key: "wake",
+      type: "boolean",
+      category: "display_wake",
+    });
+  }
+
   // Vendor-specific extras — anything not already handled, in any
   // primitive shape, lands as a `generic` data row keyed by the JSON
   // field name.  Lets a future firmware add `battery_pct` / `sleep_s` /
@@ -165,6 +178,7 @@ export function parseState(payload: string | Buffer): ParsedState | null {
     "rssi",
     "language",
     "brightness",
+    "wake",
   ]);
   for (const [key, value] of Object.entries(obj)) {
     if (HANDLED.has(key)) continue;
