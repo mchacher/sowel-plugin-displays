@@ -106,4 +106,32 @@ describe("parseState", () => {
     expect(r!.data).toEqual([]);
     expect(r!.orders).toEqual([]);
   });
+
+  it("wake: true advertises the display_wake order (spec 122)", () => {
+    const r = parseState(
+      JSON.stringify({ id: "x", version: "v", uptime_s: 1, wake: true }),
+    )!;
+    const wakeOrder = r.orders.find((o) => o.category === "display_wake");
+    expect(wakeOrder).toEqual({
+      key: "wake",
+      type: "boolean",
+      category: "display_wake",
+    });
+    // wake is a capability flag, not telemetry — no data row.
+    expect(r.data.find((d) => d.key === "wake")).toBeUndefined();
+  });
+
+  it("wake absent → no display_wake order, no generic data row", () => {
+    const r = parseState(JSON.stringify({ id: "x", version: "v", uptime_s: 1 }))!;
+    expect(r.orders.find((o) => o.category === "display_wake")).toBeUndefined();
+    expect(r.data.find((d) => d.key === "wake")).toBeUndefined();
+  });
+
+  it("wake: false → no display_wake order (firmware opts out)", () => {
+    const r = parseState(
+      JSON.stringify({ id: "x", version: "v", uptime_s: 1, wake: false }),
+    )!;
+    expect(r.orders.find((o) => o.category === "display_wake")).toBeUndefined();
+    expect(r.data.find((d) => d.key === "wake")).toBeUndefined();
+  });
 });

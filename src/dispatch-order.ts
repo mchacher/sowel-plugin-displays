@@ -39,6 +39,15 @@ export function dispatchOrder(
         payload: value,
       };
     }
+    case "wake": {
+      // Spec 122 — no-value action.  Payload ignored on the wire; the
+      // firmware reads its own `user_pct` NVS value and restores the
+      // panel to that brightness.
+      return {
+        topic: `${topicPrefix}/${sourceDeviceId}/cmd/wake`,
+        payload: "",
+      };
+    }
     default: {
       // Vendor-specific orders — passthrough as a string.  The firmware
       // ignores unknown topics with a log line (spec 121 contract), so
