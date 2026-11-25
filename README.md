@@ -76,7 +76,7 @@ npm ci && npm run build
 
 | Key             | Required | Default              | Notes                                              |
 | --------------- | -------- | -------------------- | -------------------------------------------------- |
-| mqtt_url        | yes      | —                    | e.g. `mqtt://192.168.0.230:1883`                   |
+| mqtt_url        | yes      | `mqtt://host.docker.internal:1883` | e.g. `mqtt://192.168.0.230:1883`                   |
 | mqtt_username   | no       | —                    | Anonymous broker if empty                          |
 | mqtt_password   | no       | —                    |                                                    |
 | mqtt_client_id  | no       | sowel-energy-display | Suffixed with a 6-char random on start             |
